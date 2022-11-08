@@ -1,0 +1,161 @@
+##################################
+# preset
+#cpd /xw
+set xs_return_result 1
+query no
+##################################
+# file for output 
+#set fileid [open "res/APEC_Ztznh05fov.dat" w]
+set fileid [open "res/APEC_srge_counts.dat" w]
+##################################
+# response
+dummyrsp 0.1 50.0 20
+##################################
+rm stats.dat
+#echo "nch e1 e2 es cs ecs" 
+# model
+mo cflux*wabs*apec
+0.4
+2.
+-12.
+0.01
+0.2
+1.0
+0.
+1
+#arfm11.v1.arf_fov.c12346.fits
+##################################
+# fake data
+fakeit nowrite none
+rmf_v1.fits
+#arfm11.v1.arf_fov.c12346.fits
+arfm20.v1.arf_0.c1234567.fits
+n
+tttt
+tttt
+100000
+setpl reb 1 1
+##################################
+##################################
+# abundance loop
+for {set l 1} {$l <= 5 } {incr l}     {
+#for {set l 1} {$l <= 1 } {incr l}     {
+# set temp
+set ab [expr 0.2+0.2*($l-1)]
+newp 6 $ab
+##################################
+# temperature loop
+for {set k 1} {$k <= 100 } {incr k}     {
+#for {set k 1} {$k <= 1 } {incr k}     {
+# set temp
+#set t [expr 1.9292*10**(-0+0.05*($k-1))]
+set t [expr 0.1+0.1*($k+1)]
+newp 5 $t
+##################################
+# redshift loop
+#for {set j 1} {$j <= 5 } {incr j}     {
+for {set j 1} {$j <= 1 } {incr j}     {
+# set redshift
+set z [expr 0.0+0.5*($j-1)]
+newp 7 $z
+##################################
+# nh loop
+#for {set i 1} {$i <= 21} {incr i}	{
+for {set i 1} {$i <= 1} {incr i}	{
+# set nh
+#set nh [expr 5*10**(-1+0.1*($i-1))]
+set nh [expr 0.01*10**(0+0.1*($i-1))]
+newp 4 $nh
+##################################
+# output
+setpl ene
+notice all
+pl da
+flux 0.4 2.
+##
+notice all
+ign **-0.2 10.-**
+#setpl reb 1e10 10000
+#tclout rate 1
+set c0210 [lindex [tcloutr rate 1] 2]
+puts $c0210
+####
+notice all
+ign **-0.2 0.5-**
+#setpl reb 1e10 10000
+#tclout rate 1
+set c0205 [lindex [tcloutr rate 1] 2]
+puts $c0205
+##
+##
+notice all
+ign **-0.5 1.-**
+setpl reb 10000 10000
+#tclout rate 1
+set c051 [lindex [tcloutr rate 1] 2]
+puts $c051
+##
+##
+notice all
+ign **-1. 2.-**
+#setpl reb 1e10 10000
+#tclout rate 1
+set c12 [lindex [tcloutr rate 1] 2]
+puts $c12
+##
+##
+notice all
+ign **-0.4 2.-**
+#setpl reb 1e10 10000
+#tclout rate 1
+set c042 [lindex [tcloutr rate 1] 2]
+puts $c042
+##
+##
+notice all
+ign **-2. 5.-**
+#setpl reb 1e10 10000
+#tclout rate 1
+set c25 [lindex [tcloutr rate 1] 2]
+puts $c25
+##
+##
+notice all
+ign **-5. 10.-**
+#setpl reb 1e10 10000
+#tclout rate 1
+set c510 [lindex [tcloutr rate 1] 2]
+puts $c510
+##
+flux 0.4 2.
+set f042 [lindex [tcloutr flux ] 0]
+#
+##
+notice all
+ign **-0.2 8.-**
+setpl ene
+setpl reb 1 1
+setpl del all
+pl da
+rm ttt.dat
+setpl co wdat ttt.dat
+pl
+
+./stats.sh $f042 $ab $t $z $nh >> stats.dat
+
+#puts $fileid [$z $nh $c051 $c12 $c245 $c4512 $hr2 $hr3 $hr4]
+puts $fileid [format "%12.7e %12.7e %12.7e %12.7e %12.7e %12.7e %12.7e %12.7e %12.7e %12.7e %12.7e %12.7e" $f042 $ab $t $z $nh $c042 $c0210 $c0205 $c051 $c12 $c25 $c510 ]
+#rm *fak*
+# end of the nh loop	
+     }
+# end of the z loop
+	}
+# end of the t loop
+	}
+# end of the abund loop
+	}		
+# close file
+close $fileid
+# leave XSPEC
+flux 0.4 2.
+exit

@@ -1,0 +1,17 @@
+model wabs*(const*apec+const*apec)
+0.01
+$f_min
+$T_min
+1 
+0
+1
+$f_max
+$T_max
+1
+0
+1
+newp 2 $f_min
+newp 3 $T_min
+newp 7 $f_max
+newp 8 $T_max
+show pa
