@@ -134,7 +134,7 @@ def get_Tspec_continuum_eq46(fminnn, Tmin, Tmax, alpha, telescope_name):
         #c_T_min = calc_c_T(Tmin, 0.7, 10.0, telescope_name, Xplot=False)
         #c_T_max = calc_c_T(Tmax, 0.7, 10.0, telescope_name, Xplot=False)
         
-        md = 'flux'
+        md = 'rate'
         
         c_T_min = c_T(telescope_name, Tmin, md)
         c_T_max = c_T(telescope_name, Tmax, md)
@@ -155,7 +155,7 @@ def get_Tspec_continuum_eq46(fminnn, Tmin, Tmax, alpha, telescope_name):
 def fancy_fig4():
 
 	#plt.ylim(0.1, 30)
-	#plt.yscale('log')
+	plt.yscale('log')
 	plt.xticks(size=15)
 	plt.yticks([0.1, 1, 10], [0.1, 1, 10], size=15)
 	plt.xlabel('$f_{min}$', fontsize = 15)
