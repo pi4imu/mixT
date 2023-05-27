@@ -15,7 +15,7 @@ def single_T_fit_continuum(T_minnn, T_maxxx, N_fmins, telescope_name, nrm, texp,
 
     x.AllData.clear()
     x.AllData.removeDummyrsp()
-    x.AllData.dummyrsp(lowE=0.1, highE=50.0, nBins=100)
+    x.AllData.dummyrsp(lowE=0.1, highE=50.0, nBins=1024)
     x.Xset.addModelString("APEC_TRACE_ABUND", "0")
         
     if Xplot:
@@ -43,7 +43,7 @@ def single_T_fit_continuum(T_minnn, T_maxxx, N_fmins, telescope_name, nrm, texp,
         #flux_list.append(fluxx) # in units of ergs/cm2/s 
         #or use [4] in units of photons / s / cm^2
         
-        #x.AllModels.setEnergies("0.1 10.0 5 log")
+        #x.AllModels.setEnergies("0.7 10.0 5 log")
         #x.AllModels.setEnergies("reset")
         
         # plot model
@@ -74,7 +74,7 @@ def single_T_fit_continuum(T_minnn, T_maxxx, N_fmins, telescope_name, nrm, texp,
         x.Fit.nIterations = 100
         x.Fit.query = 'yes'
         x.Fit.weight = 'standard'
-        x.Fit.statMethod = 'chi'
+        x.Fit.statMethod = 'cstat'
         x.Fit.perform()
         #x.AllModels.show()
         x.Fit.show()

@@ -84,7 +84,7 @@ def calc_c_T(T, T_left, T_right, telescope_name, Xplot=False):
     
     s1 = x.AllData(1).rate[0]
     
-    x.AllModels.calcFlux('0.7 10.0')
+    x.AllModels.calcFlux(f"{T_left} {T_right}")
     flx = x.AllData(1).flux[0]
     
     x.AllData.clear()
@@ -127,7 +127,7 @@ def get_Tspec_continuum_eq46(fminnn, Tmin, Tmax, alpha, telescope_name):
         
         weights = temperatures*0
         
-        weights = [temperatures[i]**(-alpha) for i in range(0, len(temperatures))]
+        weights = [ts**(-alpha) for ts in temperatures]
 
         weights = np.multiply(weights, [fmin, (1-fmin)])
         
@@ -154,7 +154,7 @@ def get_Tspec_continuum_eq46(fminnn, Tmin, Tmax, alpha, telescope_name):
     
 def fancy_fig4():
 
-	#plt.ylim(0.1, 30)
+	plt.ylim(0.1, 30)
 	plt.yscale('log')
 	plt.xticks(size=15)
 	plt.yticks([0.1, 1, 10], [0.1, 1, 10], size=15)
