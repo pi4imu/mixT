@@ -160,7 +160,10 @@ def perform_fakeit(tname, expos):
         ARF_NAME = 'telescopes/acis/acisi_namp_qc.arf'
     elif tname == 'XMM-Newton/MOS':
         RMF_NAME = 'telescopes/xmm-newton/m1_thin1v9q19t5r5_all_15.rsp'
-        ARF_NAME = ''    
+        ARF_NAME = ''
+    elif tname == 'Chandra/ACIS-2002':
+        RMF_NAME = 'telescopes/chandra-2002/acisf03243_000N022_r0087_rmf3.fits'
+        ARF_NAME = 'telescopes/chandra-2002/acisf03243_000N022_r0087_arf3.fits'
 
     fs = x.FakeitSettings(response = RMF_NAME, 
                                arf = ARF_NAME, 

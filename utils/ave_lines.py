@@ -39,7 +39,10 @@ def calc_l_T(T, telescope_name, Xplot=False):
         ARF_NAME = 'telescopes/acis/acisi_namp_qc.arf'
     elif telescope_name == 'XMM-Newton/MOS':
         RMF_NAME = 'telescopes/xmm-newton/m1_thin1v9q19t5r5_all_15.rsp'
-        ARF_NAME = '' 
+        ARF_NAME = ''
+    elif telescope_name == 'Chandra/ACIS-2002':
+        RMF_NAME = 'telescopes/chandra-2002/acisf03243_000N022_r0087_rmf3.fits'
+        ARF_NAME = 'telescopes/chandra-2002/acisf03243_000N022_r0087_arf3.fits'
     
     fs = x.FakeitSettings(response = RMF_NAME, 
                                arf = ARF_NAME, 
@@ -94,6 +97,8 @@ def l_T(telescope_name, temperature, mode):
         tt = 'SRG_eROSITA'
     if telescope_name == 'XMM-Newton/MOS':
         tt = 'XMM-Newton_MOS'
+    if telescope_name == 'Chandra/ACIS-2002':
+    	tt = 'Chandra_ACIS-2002'
     
     read_lT = pd.read_csv("l(T)/l(T)_"+str(tt)+".csv", header=None, delimiter=' ')
     temps1 = read_lT[0].values
@@ -125,6 +130,8 @@ def t_from_e(EE, telescope_name):
         tt = 'SRG_eROSITA'
     if telescope_name == 'XMM-Newton/MOS':
         tt = 'XMM-Newton_MOS'
+    if telescope_name == 'Chandra/ACIS-2002':
+    	tt = 'Chandra_ACIS-2002'
     
     table = pd.read_csv('l(T)/l(T)_'+tt+'.csv', sep = ' ', header=None, index_col=False)
     
@@ -142,6 +149,8 @@ def calc_Tspec_from_avE(Tmin, Tmax, N_fmins, telescope_name):
         tt = 'SRG_eROSITA'
     if telescope_name == 'XMM-Newton/MOS':
         tt = 'XMM-Newton_MOS'
+    if telescope_name == 'Chandra/ACIS-2002':
+    	tt = 'Chandra_ACIS-2002'
     
     table = pd.read_csv('l(T)/l(T)_'+tt+'.csv', sep = ' ', header=None, index_col=False)
 
