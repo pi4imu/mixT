@@ -58,6 +58,9 @@ def calc_c_T(T, T_left, T_right, telescope_name, Xplot=False):
     mod.setPars(0.00, T, 0.0, 0, 1)
     x.AllModels.show()
     
+    x.AllModels.calcFlux(f"{T_left} {T_right}")
+    flx = x.AllModels(1).flux[0]
+    
     if Xplot:
         x.Plot.device = '/xs'
     else:
@@ -87,15 +90,15 @@ def calc_c_T(T, T_left, T_right, telescope_name, Xplot=False):
     
     s1 = x.AllData(1).rate[0]
     
-    x.AllModels.calcFlux(f"{T_left} {T_right}")
-    flx = x.AllData(1).flux[0]
+#    x.AllModels.calcFlux(f"{T_left} {T_right}")
+#    flx = x.AllData(1).flux[0]
     
     x.AllData.clear()
     x.AllModels.clear()
      
     return flx, s1, np.dot(xVals, yVals)/sum(yVals)
     
-def c_T(telescope_name, temperature, mode):
+def c_T(telescope_name, temperature, mode, tlower):
 
     if telescope_name == 'Chandra/ACIS-OLD':
     	tt = 'Chandra_ACIS-OLD'
@@ -106,7 +109,7 @@ def c_T(telescope_name, temperature, mode):
     if telescope_name == 'Chandra/ACIS-2002':
     	tt = 'Chandra_ACIS-2002'
     
-    read_cT = pd.read_csv('c(T)/c(T)_'+str(tt)+'.csv', header=None, delimiter=' ')
+    read_cT = pd.read_csv('c(T)/c(T)_'+str(tt)+'_'+str(tlower)+'.csv', header=None, delimiter=' ')
     temps = read_cT[0].values
     flux_photons = read_cT[1].values
     count_rate = read_cT[2].values
@@ -120,7 +123,7 @@ def c_T(telescope_name, temperature, mode):
         return npdot[np.argmin(np.abs(temps - temperature))]
 
 
-def get_Tspec_continuum_eq46(fminnn, Tmin, Tmax, alpha, telescope_name):
+def get_Tspec_continuum_eq46(fminnn, Tmin, Tmax, alpha, telescope_name, tlowerr):
     
     # derive T_spec from given values 
     # of T_min, T_max and f_min
@@ -141,8 +144,8 @@ def get_Tspec_continuum_eq46(fminnn, Tmin, Tmax, alpha, telescope_name):
         
         md = 'rate'
         
-        c_T_min = c_T(telescope_name, Tmin, md)
-        c_T_max = c_T(telescope_name, Tmax, md)
+        c_T_min = c_T(telescope_name, Tmin, md, tlowerr)
+        c_T_max = c_T(telescope_name, Tmax, md, tlowerr)
         
         weights = np.multiply(weights, [c_T_min, c_T_max])
 
@@ -174,4 +177,12 @@ def fancy_fig4():
 	dots_T = Line2D([], [], label='Single-T fit', color='black', marker='.', linewidth=0, markersize=12)
 	handles.extend([line_e, dots_f, dots_T])
 	plt.legend(handles=handles, fontsize=15)
+	
+def add_fancy():
+
+    plt.xlabel('Temperature of gas (keV)', fontsize = 12)
+    plt.yticks(size=12)
+    plt.xscale('log')
+    plt.xticks([0.1, 1, 10], [0.1, 1, 10], size=12)
+    plt.legend()
  

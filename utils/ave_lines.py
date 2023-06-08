@@ -1,4 +1,4 @@
-def calc_l_T(T, telescope_name, Xplot=False):
+def calc_l_T(T, T_left, T_right, telescope_name, Xplot=False):
 
     x.AllData.clear()
     x.AllData.removeDummyrsp()
@@ -57,7 +57,7 @@ def calc_l_T(T, telescope_name, Xplot=False):
                    filePrefix = "",
                       noWrite = True)
 
-    x.AllData.ignore("**-0.7 10.0-**")             # IMPORTANT !
+    x.AllData.ignore(f"**-{T_left} {T_right}-**")             # IMPORTANT !
     #x.AllData.show()
     x.AllModels.setEnergies("reset")
     
@@ -66,7 +66,7 @@ def calc_l_T(T, telescope_name, Xplot=False):
     xVals = x.Plot.x()
     yVals = x.Plot.y()
          
-    x.AllModels.calcFlux('0.7 10.0')
+    x.AllModels.calcFlux(f"{T_left} {T_right}")
     flx = x.AllData(1).flux[0]
     
     cr = x.AllData(1).rate[2]
@@ -89,7 +89,7 @@ def calc_l_T(T, telescope_name, Xplot=False):
     return flx, cr, np.dot(xVals, yVals)/sum(yVals), np.dot(E_i, s_i)/cr
 
 
-def l_T(telescope_name, temperature, mode):
+def l_T(telescope_name, temperature, mode, tlower):
 
     if telescope_name == 'Chandra/ACIS-OLD':
         tt = 'Chandra_ACIS-OLD'
@@ -100,12 +100,11 @@ def l_T(telescope_name, temperature, mode):
     if telescope_name == 'Chandra/ACIS-2002':
     	tt = 'Chandra_ACIS-2002'
     
-    read_lT = pd.read_csv("l(T)/l(T)_"+str(tt)+".csv", header=None, delimiter=' ')
+    read_lT = pd.read_csv("l(T)/l(T)_"+str(tt)+"_"+str(tlower)+".csv", header=None, delimiter=' ')
     temps1 = read_lT[0].values
     flux_photons1 = read_lT[1].values
     count_rate1 = read_lT[2].values
     npdot1 = read_lT[3].values
-    av_en1 = read_lT[4].values
     
     if mode == 'flux':
         return flux_photons1[np.argmin(np.abs(temps1 - temperature))]
@@ -113,16 +112,25 @@ def l_T(telescope_name, temperature, mode):
         return count_rate1[np.argmin(np.abs(temps1 - temperature))]
     elif mode == 'npdot':
         return npdot1[np.argmin(np.abs(temps1 - temperature))]
-    elif mode == 'av_en':
-        return av_en1[np.argmin(np.abs(temps1 - temperature))]
         
         
-def e_from_t(TT, tlscp):
+def e_from_t(TT, telescope_name, tlower):
+
+    if telescope_name == 'Chandra/ACIS-OLD':
+        tt = 'Chandra_ACIS-OLD'
+    if telescope_name == 'SRG/eROSITA':
+        tt = 'SRG_eROSITA'
+    if telescope_name == 'XMM-Newton/MOS':
+        tt = 'XMM-Newton_MOS'
+    if telescope_name == 'Chandra/ACIS-2002':
+    	tt = 'Chandra_ACIS-2002'
     
-    return l_T(tlscp, TT, 'av_en')
+    table = pd.read_csv("l(T)/l(T)_"+tt+"_"+str(tlower)+".csv", header=None, delimiter=' ')
+    
+    return table[4][np.argmin(np.abs(table[0]-TT))]
     
     
-def t_from_e(EE, telescope_name):
+def t_from_e(EE, telescope_name, tlower):
     
     if telescope_name == 'Chandra/ACIS-OLD':
         tt = 'Chandra_ACIS-OLD'
@@ -133,12 +141,12 @@ def t_from_e(EE, telescope_name):
     if telescope_name == 'Chandra/ACIS-2002':
     	tt = 'Chandra_ACIS-2002'
     
-    table = pd.read_csv('l(T)/l(T)_'+tt+'.csv', sep = ' ', header=None, index_col=False)
+    table = pd.read_csv('l(T)/l(T)_'+tt+'_'+str(tlower)+'.csv', sep = ' ', header=None, index_col=False)
     
     return table[0][np.argmin(np.abs(table[4]-EE))]
     
     
-def calc_Tspec_from_avE(Tmin, Tmax, N_fmins, telescope_name):
+def calc_Tspec_from_avE(Tmin, Tmax, N_fmins, telescope_name, tlower):
     
     # derive T_spec from given values 
     # of T_min, T_max, f_min and for given <E>(T)
@@ -152,10 +160,10 @@ def calc_Tspec_from_avE(Tmin, Tmax, N_fmins, telescope_name):
     if telescope_name == 'Chandra/ACIS-2002':
     	tt = 'Chandra_ACIS-2002'
     
-    table = pd.read_csv('l(T)/l(T)_'+tt+'.csv', sep = ' ', header=None, index_col=False)
+    table = pd.read_csv('l(T)/l(T)_'+tt+'_'+str(tlower)+'.csv', sep = ' ', header=None, index_col=False)
 
-    E_1 = e_from_t(Tmin, telescope_name)
-    E_2 = e_from_t(Tmax, telescope_name)
+    E_1 = e_from_t(Tmin, telescope_name, tlower)
+    E_2 = e_from_t(Tmax, telescope_name, tlower)
     
     S_j_1 = table[2][np.argmin(np.abs(table[0] - Tmin))]
     S_j_2 = table[2][np.argmin(np.abs(table[0] - Tmax))]
@@ -168,7 +176,7 @@ def calc_Tspec_from_avE(Tmin, Tmax, N_fmins, telescope_name):
     	denom =  fmin*S_j_1     + (1-fmin)*S_j_2
        
     	E_tot = num/denom
-    	TTT.append(t_from_e(E_tot, telescope_name))
+    	TTT.append(t_from_e(E_tot, telescope_name, tlower))
     	#plt.scatter(fmin, TTT, color="blue")
 
     return TTT
@@ -186,4 +194,23 @@ def plot_Tspec_fmin_details():
     line_e = Line2D([], [], label='$T_{spec}$ from eq. [1-3]', color='blue', linestyle='-', linewidth=2)
     dots_f = Line2D([], [], label='Single-T fit', color='black', marker='.', linestyle='None', markersize=12)
     handles.extend([line_n, line_e, dots_f])
-    plt.legend(handles=handles, fontsize=15)
+    plt.legend(handles=handles, fontsize=15)    
+    
+    
+def add_fancy():
+
+    plt.xlabel('Temperature of gas (keV)', fontsize = 12)
+    plt.yticks(size=12)
+    plt.xscale('log')
+    plt.xticks([0.1, 1, 10], [0.1, 1, 10], size=12)
+    plt.legend()
+    
+
+def f_line(telescope_name, temperature, tlower, mode, abundance):
+    
+    c__T = c_T(telescope_name, temperature, mode, tlower)
+    l__T = l_T(telescope_name, temperature, mode, tlower)
+    
+    return l__T*abundance / (l__T*abundance + c__T)
+    
+

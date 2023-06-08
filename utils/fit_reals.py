@@ -68,7 +68,7 @@ def single_T_realistic(T_minnn, T_maxxx, N_fmins, abund, telescope_name, nrm, te
         mod2fit = x.Model("phabs*apec")
         mod2fit.setPars(0.0, 1.0, abund, 0., nrm)
         mod2fit(1).frozen = True    # n_H 
-        mod2fit(2).values = f"{(bounds[0]+bounds[1])/2}, 0.01, {bounds[0]}, {bounds[0]}, {2*bounds[1]}, {2*bounds[1]}" # temperature
+        mod2fit(2).values = f"{(bounds[0]+bounds[1])/2}, 0.01, {0.9999*bounds[0]}, {0.9999*bounds[0]}, {1.1*bounds[1]}, {1.1*bounds[1]}" # temperature
         mod2fit(3).frozen = False   # abundance
         #mod2fit(4).frozen = False  # redshift   
         #mod2fit(5).frozen = True   # norm
