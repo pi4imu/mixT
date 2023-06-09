@@ -80,7 +80,7 @@ def single_T_fit_lines(T_minnn, T_maxxx, N_fmins, abund, telescope_name, nrm, te
 
         # data from fake spectrum
         perform_fakeit(telescope_name, str(texp))
-        x.AllData.ignore("**-0.7 10.0-**")             # IMPORTANT !
+        x.AllData.ignore("**-0.3 10.0-**")             # IMPORTANT !
         x.AllData.show()
         x.AllModels.setEnergies("reset")
         
@@ -132,7 +132,7 @@ def single_T_fit_lines(T_minnn, T_maxxx, N_fmins, abund, telescope_name, nrm, te
         #print(best_kT)
         
         # calculating flux
-        x.AllModels.calcFlux('0.7 10.0')
+        x.AllModels.calcFlux('0.3 10.0')
         fluxx = x.AllData(1).flux[0]
         flux_list.append(fluxx) # in units of ergs/cm2/s 
         #or use [3] in units of photons / s / cm^2

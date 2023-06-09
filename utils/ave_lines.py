@@ -28,6 +28,9 @@ def calc_l_T(T, T_left, T_right, telescope_name, Xplot=False):
     #x.AllModels.setEnergies("reset")
     #x.Plot("model")
     
+    x.AllModels.calcFlux(f"{T_left} {T_right}")
+    flx = x.AllModels(1).flux[0]
+    
     if telescope_name == 'Chandra/ACIS-OLD':
         RMF_NAME = 'telescopes/chandra/djs50.ugc3957_v05.rmf' 
         ARF_NAME = 'telescopes/chandra/djs50.ugc3957_v05.arf' 
@@ -65,9 +68,6 @@ def calc_l_T(T, T_left, T_right, telescope_name, Xplot=False):
     x.Plot.xAxis = "keV"
     xVals = x.Plot.x()
     yVals = x.Plot.y()
-         
-    x.AllModels.calcFlux(f"{T_left} {T_right}")
-    flx = x.AllData(1).flux[0]
     
     cr = x.AllData(1).rate[2]
     
